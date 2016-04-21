@@ -11,6 +11,12 @@
 
         });
 
+        $http.get("/lsp/deploy_status").then(function(response) {
+
+            $scope.deployResultsData = response.data;
+
+        });
+
     });
 
 })(angular);

@@ -3,12 +3,15 @@ import datetime
 import urllib2
 
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View, TemplateView
 
 from bs4 import BeautifulSoup
 
+
 class LspResults(TemplateView):
     template_name = 'index.html'
+
 
 class QAStatus(View):
 
@@ -23,6 +26,7 @@ class QAStatus(View):
 
         data = {
             'status': 'Good',
+            'last_updated': datetime.datetime.utcnow(),
             'title': soup.title.string
         }
 
@@ -33,16 +37,13 @@ class DeployStatus(View):
 
     def get(self, request, *args, **kwargs):
 
-        print os.getcwd()
+        file_path = 'live_system_products/deploy_status.txt'
 
-        status_file = open('live_system_products/test.txt', 'r')
+        status_file = open(file_path, 'r')
 
         full_file_contents = status_file.read()
 
-        import os
-        import datetime
-
-        t = os.path.getmtime(filename)
+        t = os.path.getmtime(file_path)
         modified_date = datetime.datetime.fromtimestamp(t)
 
         data = {
@@ -52,5 +53,25 @@ class DeployStatus(View):
         }
 
         status_file.close()
+
+        return JsonResponse(data)
+
+
+class DeployReceiver(View):
+
+    def post(self, request, *args, **kwargs):
+
+        deploy_status = request.POST['deploy_message']
+
+        file_path = 'live_system_products/deploy_status.txt'
+        status_file = open(file_path, 'w')
+
+        status_file.write(deploy_status)
+
+        status_file.close()
+
+        data = {
+            'Success': True
+        }
 
         return JsonResponse(data)

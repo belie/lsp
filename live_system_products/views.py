@@ -1,6 +1,5 @@
 import os
-
-from HTMLParser import HTMLParser
+import datetime
 import urllib2
 
 from django.http import JsonResponse
@@ -40,8 +39,15 @@ class DeployStatus(View):
 
         full_file_contents = status_file.read()
 
+        import os
+        import datetime
+
+        t = os.path.getmtime(filename)
+        modified_date = datetime.datetime.fromtimestamp(t)
+
         data = {
             'status': 'Failed',
+            'last_updated': modified_date,
             'file_contents': full_file_contents
         }
 

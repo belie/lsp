@@ -1,0 +1,13 @@
+pre {
+    width: 100%;
+    min-height: 300px;
+    white-space: pre-wrap;
+}
+
+p img {
+    height:100px;
+}
+
+.jumbotron {
+    min-height:600px;
+}
